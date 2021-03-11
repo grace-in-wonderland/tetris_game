@@ -16,7 +16,7 @@ defmodule TetrisGameWeb.Router do
 
   scope "/", TetrisGameWeb do
     pipe_through :browser
-
+    live "/game", GameLive
     live "/", PageLive, :index
   end
 
