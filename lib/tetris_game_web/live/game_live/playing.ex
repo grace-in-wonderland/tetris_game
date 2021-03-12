@@ -1,24 +1,10 @@
-defmodule TetrisGameWeb.GameLive do
+defmodule TetrisGameWeb.GameLive.Playing do
   use TetrisGameWeb, :live_view
   alias Tetris.Game
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: :timer.send_interval(500, :tick)
     {:ok, new_game(socket)}
-  end
-
-  def render(assigns) do
-    ~L"""
-    <section class="phx-hero">
-    <div phx-window-keydown="keystroke">
-      <h1>Welcome to Tetris</h1>
-      <%= render_board(assigns) %>
-      <pre>
-        <%= inspect @game %>
-      </pre>
-      </div>
-    </section>
-    """
   end
 
   defp render_board(assigns) do
@@ -54,10 +40,6 @@ defmodule TetrisGameWeb.GameLive do
     assign(socket, game: Game.new())
   end
 
-  defp new_tetromino(socket) do
-    assign(socket, game: Game.new_tetromino(socket.assigns.game))
-  end
-
   def rotate(%{assigns: %{game: game}}=socket) do
     assign(socket, game: Game.rotate(game))
   end
@@ -74,8 +56,14 @@ defmodule TetrisGameWeb.GameLive do
     assign(socket, game: Game.left(game))
   end
 
+  def maybe_end_game(%{assigns: %{game: %{game_over: true}}}=socket) do
+    socket
+    |> push_redirect(to: "/game/over")
+  end
+  def maybe_end_game(socket), do: socket
+
   def handle_info(:tick, socket) do
-    {:noreply, socket |> down }
+    {:noreply, socket |> down |> maybe_end_game }
   end
 
   def handle_event("keystroke", %{"key" => " "}, socket) do

@@ -1,6 +1,6 @@
 defmodule Tetris.Game do
   alias Tetris.{Tetromino, Points}
-  defstruct [:tetromino, points: [], score: 0, junkyard: %{}]
+  defstruct [:tetromino, points: [], score: 0, junkyard: %{}, game_over: false]
 
   def new do
     __struct__()
@@ -58,6 +58,7 @@ defmodule Tetris.Game do
      |> merge(old)
      |> new_tetromino
      |> show
+     |> check_game_over
    end
 
    defp merge(game, old) do
@@ -74,4 +75,14 @@ defmodule Tetris.Game do
      game.junkyard
      |> Enum.map(fn {{x, y}, shape} -> {x, y, shape} end)
    end
+
+   def check_game_over(game) do
+     continue_game =
+       game.tetromino
+       |> Tetromino.show
+       |> Points.valid?(game.junkyard)
+
+     %{game |game_over: !continue_game}
+   end
+
 end
