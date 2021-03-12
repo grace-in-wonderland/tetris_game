@@ -21,6 +21,7 @@ defmodule Tetris.Tetromino do
   def show(piece) do
     piece
     |> points
+    |> Points.rotate(piece.rotation)
     |> Points.move(piece.location)
     |> Points.add_shape(piece.shape)
   end
