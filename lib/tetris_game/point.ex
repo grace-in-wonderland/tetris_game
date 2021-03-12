@@ -45,4 +45,15 @@ defmodule Tetris.Point do
   def add_shape({x,y}, shape), do: {x, y, shape}
   def add_shape(point_with_shape, _shape), do: point_with_shape
 
+  def valid?(point, junkyard) do
+    in_bounds?(point) and !collide?(point, junkyard)
+  end
+
+  def collide?({x, y, _c}, junkyard), do: collide?({x, y}, junkyard)
+  def collide?(point, junkyard), do: !!junkyard[point]
+
+  def in_bounds?({x, _y, _color}) when x < 1, do: false
+  def in_bounds?({x, _y, _color}) when x > 10, do: false
+  def in_bounds?({_x, y, _color}) when y > 20, do: false
+  def in_bounds?(_point), do: true
 end

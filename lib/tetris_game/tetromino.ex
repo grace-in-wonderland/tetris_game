@@ -14,6 +14,9 @@ defmodule Tetris.Tetromino do
   def left(piece),  do: %{ piece | location: Point.left(piece.location) }
   def down(piece),  do: %{ piece | location: Point.down(piece.location) }
 
+  def maybe_move(_old, new, true=valid), do: new
+  def maybe_move(old, _new, false=valid), do: old
+
   def rotate(piece) do
     %{ piece | rotation: rotate_clockwise(piece.rotation)}
   end
@@ -26,7 +29,7 @@ defmodule Tetris.Tetromino do
     |> Points.add_shape(piece.shape)
   end
 
-  def points(%{shape: :l}=piece) do
+  def points(%{shape: :l}) do
     [
       {2, 1},
       {2, 2},
@@ -34,7 +37,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :j}=piece) do
+  def points(%{shape: :j}) do
     [
                  {3, 1},
                  {3, 2},
@@ -42,33 +45,33 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :z}=piece) do
+  def points(%{shape: :z}) do
     [
       {1, 2}, {2, 2},
               {2, 3}, {3, 3}
     ]
   end
 
-  def points(%{shape: :s}=piece) do
+  def points(%{shape: :s}) do
     [
               {2, 2}, {3, 2},
       {1, 3}, {2, 3}
     ]
   end
 
-  def points(%{shape: :o}=piece) do
+  def points(%{shape: :o}) do
     [
       {2, 2}, {3, 2},
       {2, 3}, {3, 3}
     ]
   end
 
-  def points(%{shape: :t}=piece) do
+  def points(%{shape: :t}) do
     [{1, 2}, {2, 2}, {3, 2},
              {2, 3}]
   end
 
-  def points(%{shape: :i}=piece) do
+  def points(%{shape: :i}) do
     [
         {2, 1},
         {2, 2},
