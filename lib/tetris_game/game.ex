@@ -69,6 +69,36 @@ defmodule Tetris.Game do
        |> Enum.into(game.junkyard)
 
        %{game| junkyard:  new_junkyard}
+        |> collapse_rows
+   end
+
+   def collapse_rows(game) do
+    rows = find_complete_rows(game)
+    game |> absorb(rows)
+   end
+
+   def absorb(game, []), do: game
+   def absorb(game, [y|ys]), do: remove_row(game, y) |> absorb(ys)
+
+   def remove_row(game, row) do
+      new_junkyard =
+      game.junkyard
+      |> Enum.reject(fn {{_x, y}, _shape} -> y == row end)
+      |> Enum.map(fn {{x, y}, shape} -> {{x, maybe_move_y(y, row)}, shape} end)
+      |> Map.new
+
+      %{game| junkyard: new_junkyard}
+   end
+
+   defp maybe_move_y(y, row) when y < row, do: y + 1
+   defp maybe_move_y(y, _row), do: y
+
+   def find_complete_rows(game) do
+      game.junkyard
+      |> Map.keys
+      |> Enum.group_by(&elem(&1, 1))
+      |> Enum.filter(fn {_y, list} -> length(list) == 10 end)
+      |> Enum.map(fn {y, _list} -> y end)
    end
 
    def junkyard_points(game) do
